@@ -12,7 +12,7 @@ def build_actor_objects(actor_to_movies: dict[str, list[str]]) -> dict[str, Acto
     return actors
 
 
-def write_actor_json(path: str, actors: dict[str, Actor]) -> None:
+def write_actors_to_json(path: str, actors: dict[str, Actor]) -> None:
     data = {name: actor.to_dict() for name, actor in actors.items()}
 
     with open(path, "w", encoding="utf-8") as f:
