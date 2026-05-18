@@ -4,7 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile.db
     volumes:
-      - actors_data:/app/src/data
+      - ./src/data:/app/src/data
+      - actors_db:/app/src/db
     restart: "no"
 
   api:
@@ -15,9 +16,10 @@ services:
       db-builder:
         condition: service_completed_successfully
     volumes:
-      - actors_data:/app/src/data
+      - actors_db:/app/src/db
     ports:
-      - "8000:8000"
+      - "8080:8080"
+    restart: unless-stopped
 
 volumes:
-  actors_data:
+  actors_db:
