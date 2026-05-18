@@ -3,3 +3,4 @@ REQUIRED_ACTORS = [KEVIN_BACON, "Tom Hanks", "John Travolta", "Peter Dinklage", 
 ACTOR_CATEGORIES = {"actor", "actress"}
 DATA_DIR = "data"
 DB_DIR = "db"
+ACTORS_FILE = "actors.json"

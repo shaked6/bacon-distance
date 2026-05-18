@@ -1,6 +1,8 @@
 import json
 import os
 
+from src.consts import ACTORS_FILE, DB_DIR
+
 
 def validate_actors_db_exists(db_path: str):
     if not os.path.exists(db_path):
@@ -47,7 +49,8 @@ def app_loop(db_path: str):
 
 
 if __name__ == "__main__":
-    file_db = "db/actors.json"
+    BASE_DIR = os.path.dirname(__file__)
+    file_db = os.path.join(BASE_DIR, DB_DIR, ACTORS_FILE)
     validate_actors_db_exists(file_db)
     app_loop(file_db)
 

@@ -2,7 +2,7 @@ import json
 import os
 from http.client import HTTPException
 
-from pywin.dialogs import status
+from starlette import status
 
 from src.data_accessors.base_db_accessor import BaseDBAccessor
 

@@ -6,12 +6,16 @@ from fastapi import requests
 
 from src.actor_json_utils import write_actors_to_json, build_actor_objects
 from src.bfs_utils import compute_initial_bacon_distances
-from src.consts import ACTOR_CATEGORIES, REQUIRED_ACTORS, DATA_DIR, DB_DIR
+from src.consts import ACTOR_CATEGORIES, REQUIRED_ACTORS, DATA_DIR, DB_DIR, ACTORS_FILE
+
+BASE_DIR = os.path.dirname(__file__)
+ABS_DATA_DIR = os.path.join(BASE_DIR, DATA_DIR)
+ABS_DB_DIR = os.path.join(BASE_DIR, DB_DIR)
 
 
 def create_dir_if_not_exists(directory: str) -> None:
     if not os.path.isdir(directory):
-        os.makedirs(directory)
+        os.makedirs(directory, exist_ok=True)
         print(f"Created directory: {directory}")
 
 
@@ -19,7 +23,7 @@ def build_path(directory: str, filename: str) -> str:
     return os.path.join(directory, filename)
 
 
-def download_if_missing(url: str, directory: Optional[str], filename: str) -> str:
+def download_if_missing(url: str, directory: str, filename: str) -> str:
     path = build_path(directory=directory, filename=filename)
 
     if os.path.exists(path):
@@ -123,26 +127,29 @@ def build_actor_movie_map(principals_path: str,
 
 
 def create_db():
-    create_dir_if_not_exists(DATA_DIR)
-    create_dir_if_not_exists(DB_DIR)
+    actors_path = os.path.join(ABS_DB_DIR, ACTORS_FILE)
+    if os.path.exists(actors_path):
+        print("actors.json already exists — skipping DB build")
+        return
+
+    create_dir_if_not_exists(ABS_DATA_DIR)
+    create_dir_if_not_exists(ABS_DB_DIR)
 
     principals_path = download_if_missing(
         url="https://datasets.imdbws.com/title.principals.tsv.gz",
-        directory=DATA_DIR,
+        directory=ABS_DATA_DIR,
         filename="title.principals.tsv.gz"
     )
     names_path = download_if_missing(
         url="https://datasets.imdbws.com/name.basics.tsv.gz",
-        directory=DATA_DIR,
+        directory=ABS_DATA_DIR,
         filename="name.basics.tsv.gz"
     )
     titles_path = download_if_missing(
         url="https://datasets.imdbws.com/title.basics.tsv.gz",
-        directory=DATA_DIR,
+        directory=ABS_DATA_DIR,
         filename="title.basics.tsv.gz"
     )
-
-    actors_path = f"{DB_DIR}/actors.json"
 
     actors = load_n_actors(names_path, num_of_actors=10)
     ensure_required_actors(names_path, actors)
