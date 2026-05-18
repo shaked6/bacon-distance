@@ -47,7 +47,7 @@ def app_loop(db_path: str):
 
 
 if __name__ == "__main__":
-    file_db = "data/actors.json"
+    file_db = "db/actors.json"
     validate_actors_db_exists(file_db)
     app_loop(file_db)
 

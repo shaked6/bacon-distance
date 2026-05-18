@@ -100,7 +100,7 @@ def create_db():
     actors_movies = build_actor_movie_map(principals_path=principals_path, titles_path=titles_path, actors=actors)
     actors = build_actor_objects(actors_movies)
     actors = compute_initial_bacon_distances(actors=actors)
-    write_actors_to_json(path="data/actors.json", actors=actors)
+    write_actors_to_json(path="db/actors.json", actors=actors)
 
     print("JSON written to actors.json")
 

@@ -1,0 +1,23 @@
+services:
+  db-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    volumes:
+      - actors_data:/app/src/data
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    depends_on:
+      db-builder:
+        condition: service_completed_successfully
+    volumes:
+      - actors_data:/app/src/data
+    ports:
+      - "8000:8000"
+
+volumes:
+  actors_data:
