@@ -1,9 +1,9 @@
 import gzip
 from typing import Optional
 
-from src.data.consts import ACTOR_CATEGORIES, REQUIRED_ACTORS
-from src.export_json import write_actors_to_json, build_actor_objects
-from src.generate_full_db import compute_initial_bacon_distances
+from src.bfs_utils import compute_initial_bacon_distances
+from src.consts import ACTOR_CATEGORIES, REQUIRED_ACTORS
+from src.actor_json_utils import write_actors_to_json, build_actor_objects
 
 
 def stream_tsv(path: str) -> dict:
@@ -13,7 +13,7 @@ def stream_tsv(path: str) -> dict:
             yield dict(zip(header, line.strip().split("\t")))
 
 
-def get_actor_id_by_name(names_path: str, target_name: str) -> Optional[tuple[str, str]]:  # todo i dont like tuples
+def get_actor_id_by_name(names_path: str, target_name: str) -> Optional[tuple[str, str]]:
     for row in stream_tsv(names_path):
         if row["primaryName"] == target_name:
             professions = row["primaryProfession"]
@@ -25,8 +25,9 @@ def get_actor_id_by_name(names_path: str, target_name: str) -> Optional[tuple[st
 def is_actor(professions: list) -> bool:
     return professions is not None and ("actor" in professions or "actress" in professions)
 
+
 def load_n_actors(names_path: str, num_of_actors: int) -> dict[str, str]:
-    actors: dict[str, str] = {}
+    actors = {}
     count = 0
 
     for row in stream_tsv(names_path):
@@ -47,13 +48,47 @@ def load_n_actors(names_path: str, num_of_actors: int) -> dict[str, str]:
 
 def ensure_required_actors(names_path: str, actors: dict[str, str]) -> None:
     for name in REQUIRED_ACTORS:
-        result = get_actor_id_by_name(names_path, name)
+        result = get_actor_id_by_name(names_path=names_path, target_name=name)
         if result is not None:
             actor_id, actor_name = result
             actors[actor_id] = actor_name
         else:
             print(f"ERROR: Could not find {name} in TSV!")
-            raise Exception # todo genuine boot failure
+            raise Exception("Failed to boot app missing required actors")
+
+
+def map_actors_movies_ids(actor_ids: set[str], principals_path: str) -> dict[str, set[str]]:
+    actors_movies = {actor_id: set() for actor_id in actor_ids}
+
+    for row in stream_tsv(principals_path):
+        actor_id = row["nconst"]
+        if actor_id in actor_ids and row["category"] in ACTOR_CATEGORIES:
+            actors_movies[actor_id].add(row["tconst"])
+    return actors_movies
+
+
+def movie_id_to_title(movie_ids: set[str], titles_path: str) -> dict[str, str]:
+    movie_titles = {}
+    for row in stream_tsv(titles_path):
+        if row["tconst"] in movie_ids and row["titleType"] == "movie":
+            movie_titles[row["tconst"]] = row["primaryTitle"]
+    return movie_titles
+
+
+def build_actor_movie_map(principals_path: str,
+                          titles_path: str,
+                          actors: dict[str, str]) -> dict[str, list[str]]:
+    actor_ids = set(actors.keys())
+    actors_movies = map_actors_movies_ids(actor_ids=actor_ids, principals_path=principals_path)
+    all_movie_ids = {movie_id for movie_ids in actors_movies.values() for movie_id in movie_ids}
+    movie_titles = movie_id_to_title(movie_ids=all_movie_ids, titles_path=titles_path)
+
+    return {
+        actors[actor_id]: [
+            movie_titles[movie_id] for movie_id in movie_ids if movie_id in movie_titles
+        ]
+        for actor_id, movie_ids in actors_movies.items()
+    }
 
 
 def main():
@@ -63,41 +98,12 @@ def main():
 
     actors = load_n_actors(names_path, num_of_actors=10)
     ensure_required_actors(names_path, actors)
-    actors_movies = build_actor_movie_map(principals_path, titles_path, actors)
+    actors_movies = build_actor_movie_map(principals_path=principals_path, titles_path=titles_path, actors=actors)
     actors = build_actor_objects(actors_movies)
-    write_actors_to_json("actors.json", actors)
+    actors = compute_initial_bacon_distances(actors=actors)
+    write_actors_to_json(path="data/actors.json", actors=actors)
 
-    compute_initial_bacon_distances("actors.json")
     print("JSON written to actors.json")
-
-
-def build_actor_movie_map(principals_path: str,
-                          titles_path: str,
-                          actors: dict[str, str]) -> dict[str, list[str]]:
-    actor_ids = set(actors.keys())
-
-    actor_movies = {actor_id: set() for actor_id in actor_ids}
-
-    # Pass 1: collect movie IDs
-    for row in stream_tsv(principals_path):
-        actor_id = row["nconst"]
-        if actor_id in actor_ids and row["category"] in ACTOR_CATEGORIES:
-            actor_movies[actor_id].add(row["tconst"])
-
-    all_movie_ids = {movie_id for movie_ids in actor_movies.values() for movie_id in movie_ids}
-
-    # Map movie IDs → titles
-    movie_titles = {}
-    for row in stream_tsv(titles_path):
-        if row["tconst"] in all_movie_ids and row["titleType"] == "movie":
-            movie_titles[row["tconst"]] = row["primaryTitle"]
-
-    return {
-        actors[actor_id]: [
-            movie_titles[movie_id] for movie_id in movie_ids if movie_id in movie_titles
-        ]
-        for actor_id, movie_ids in actor_movies.items()
-    }
 
 
 if __name__ == "__main__":

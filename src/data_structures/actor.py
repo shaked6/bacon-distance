@@ -2,27 +2,32 @@ from typing import Optional
 
 
 class Actor:
-    def __init__(self, name: str, movies: list[Optional[str]] = None):
+    def __init__(self, name: str, movies: Optional[list[str]] = None):
         self.name = name
-        self.movies = movies or [] # todo not like this?
+        self.movies = movies or []
+        self.neighbors = []
+        self.bacon_distance = -1
+        self.bacon_parent = None
+        self.version = 0
 
-        # -1 means "infinite distance" (unreachable)
-        self.distance: int = -1
-        self.closest_actor: str | None = None
-        self.shortest_path: list[str] = []
+    def bump_version(self):
+        self.version += 1
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
+            "name": self.name,
             "movies": self.movies,
-            "distance": self.distance,
-            "closest_actor": self.closest_actor,
-            "shortest_path": self.shortest_path
+            "neighbors": self.neighbors,
+            "bacon_distance": self.bacon_distance,
+            "bacon_parent": self.bacon_parent,
+            "version": self.version
         }
 
     @staticmethod
-    def from_dict(name: str, data: dict):
+    def from_dict(name: str, data: dict) -> "Actor":
         actor = Actor(name=name, movies=data.get("movies", []))
-        actor.distance = data.get("distance", -1)
-        actor.closest_actor = data.get("closest_actor")
-        actor.shortest_path = data.get("shortest_path", [])
+        actor.neighbors = data.get("neighbors", [])
+        actor.bacon_distance = data.get("bacon_distance", -1)
+        actor.bacon_parent = data.get("bacon_parent")
+        actor.version = data.get("version", 0)
         return actor
