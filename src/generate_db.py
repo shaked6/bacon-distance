@@ -90,8 +90,7 @@ def build_actor_movie_map(principals_path: str,
         for actor_id, movie_ids in actors_movies.items()
     }
 
-
-def main():
+def create_db():
     names_path = "data/name.basics.tsv.gz"
     principals_path = "data/title.principals.tsv.gz"
     titles_path = "data/title.basics.tsv.gz"
@@ -105,6 +104,8 @@ def main():
 
     print("JSON written to actors.json")
 
+def main():
+    create_db()
 
 if __name__ == "__main__":
     main()
