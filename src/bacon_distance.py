@@ -3,7 +3,6 @@ import os
 
 
 def validate_actors_db_exists(db_path: str):
-
     if not os.path.exists(db_path):
         print("Actors DB not found, init it first")
         raise Exception
@@ -51,3 +50,5 @@ if __name__ == "__main__":
     file_db = "data/actors.json"
     validate_actors_db_exists(file_db)
     app_loop(file_db)
+
+    # THIS FILE BECOMES UNUSED AFTER MILESTONE 1

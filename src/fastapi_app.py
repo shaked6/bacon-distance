@@ -1,0 +1,16 @@
+from fastapi import FastAPI
+
+from src.data_accessors.base_db_accessor import BaseDBAccessor
+
+
+def create_app(db_accessor: BaseDBAccessor) -> FastAPI:
+    app = FastAPI()
+
+    @app.get("/bacon-distance/{actor_name}")
+    def bacon_distance(actor_name: str):
+        return {
+            "actor": actor_name,
+            "distance": db_accessor.get_bacon_distance(actor_name)
+        }
+
+    return app
