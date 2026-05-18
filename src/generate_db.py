@@ -122,7 +122,7 @@ def build_actor_movie_map(principals_path: str,
     }
 
 
-def main():
+def create_db():
     create_dir_if_not_exists(DATA_DIR)
     create_dir_if_not_exists(DB_DIR)
 
@@ -153,6 +153,8 @@ def main():
 
     print("JSON written to actors.json")
 
+def main():
+    create_db()
 
 if __name__ == "__main__":
     main()
