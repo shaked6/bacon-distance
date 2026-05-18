@@ -1,9 +1,40 @@
 import gzip
+import os
 from typing import Optional
 
-from src.bfs_utils import compute_initial_bacon_distances
-from src.consts import ACTOR_CATEGORIES, REQUIRED_ACTORS
+from fastapi import requests
+
 from src.actor_json_utils import write_actors_to_json, build_actor_objects
+from src.bfs_utils import compute_initial_bacon_distances
+from src.consts import ACTOR_CATEGORIES, REQUIRED_ACTORS, DATA_DIR, DB_DIR
+
+
+def create_dir_if_not_exists(directory: str) -> None:
+    if not os.path.isdir(directory):
+        os.makedirs(directory)
+        print(f"Created directory: {directory}")
+
+
+def build_path(directory: str, filename: str) -> str:
+    return os.path.join(directory, filename)
+
+
+def download_if_missing(url: str, directory: Optional[str], filename: str) -> str:
+    path = build_path(directory=directory, filename=filename)
+
+    if os.path.exists(path):
+        print(f"Skipping download, exists: {path}")
+        return path
+
+    print(f"Downloading {url}")
+    response = requests.get(url)
+    response.raise_for_status()
+
+    with open(path, "wb") as f:
+        f.write(response.content)
+
+    print(f"Saved: {path}")
+    return path
 
 
 def stream_tsv(path: str) -> dict:
@@ -90,17 +121,35 @@ def build_actor_movie_map(principals_path: str,
         for actor_id, movie_ids in actors_movies.items()
     }
 
+
 def create_db():
-    names_path = "data/name.basics.tsv.gz"
-    principals_path = "data/title.principals.tsv.gz"
-    titles_path = "data/title.basics.tsv.gz"
+    create_dir_if_not_exists(DATA_DIR)
+    create_dir_if_not_exists(DB_DIR)
+
+    principals_path = download_if_missing(
+        url="https://datasets.imdbws.com/title.principals.tsv.gz",
+        directory=DATA_DIR,
+        filename="title.principals.tsv.gz"
+    )
+    names_path = download_if_missing(
+        url="https://datasets.imdbws.com/name.basics.tsv.gz",
+        directory=DATA_DIR,
+        filename="name.basics.tsv.gz"
+    )
+    titles_path = download_if_missing(
+        url="https://datasets.imdbws.com/title.basics.tsv.gz",
+        directory=DATA_DIR,
+        filename="title.basics.tsv.gz"
+    )
+
+    actors_path = f"{DB_DIR}/actors.json"
 
     actors = load_n_actors(names_path, num_of_actors=10)
     ensure_required_actors(names_path, actors)
     actors_movies = build_actor_movie_map(principals_path=principals_path, titles_path=titles_path, actors=actors)
     actors = build_actor_objects(actors_movies)
     actors = compute_initial_bacon_distances(actors=actors)
-    write_actors_to_json(path="data/actors.json", actors=actors)
+    write_actors_to_json(path=actors_path, actors=actors)
 
     print("JSON written to actors.json")
 
