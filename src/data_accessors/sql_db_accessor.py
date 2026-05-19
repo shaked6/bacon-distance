@@ -1,8 +1,7 @@
-from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from starlette import status
 
 from src.data_accessors.base_db_accessor import BaseDBAccessor
+from src.exceptions.actor_not_found_exception import ActorNotFoundException
 from src.models.db_actor import DBActor
 from src.models.db_actor_movie import DBActorMovie
 from src.models.db_engine import SessionLocal
@@ -16,10 +15,7 @@ class SQLDBAccessor(BaseDBAccessor):
             actor = session.query(DBActor).filter(DBActor.name.ilike(actor_name)).first()
 
             if actor is None:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Actor '{actor_name}' does not exist in the database."
-                )  # todo this doesnt belong in here need to create actor not found exception
+                raise ActorNotFoundException(actor_name=actor_name)
 
             return str(actor.bacon_distance)
 
@@ -30,9 +26,7 @@ class SQLDBAccessor(BaseDBAccessor):
         session: Session = SessionLocal()
         try:
             rows = session.query(DBActorMovie).filter(DBActorMovie.actor_name == actor_name).all()
-
             return [row.movie_title for row in rows]
-
         finally:
             session.close()
 
@@ -40,7 +34,6 @@ class SQLDBAccessor(BaseDBAccessor):
         session: Session = SessionLocal()
         try:
             rows = session.query(DBActorMovie).filter(DBActorMovie.movie_title == movie_title).all()
-
             return [row.actor_name for row in rows]
 
         finally:
