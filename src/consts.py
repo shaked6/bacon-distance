@@ -4,3 +4,4 @@ ACTOR_CATEGORIES = {"actor", "actress"}
 DATA_DIR = "data"
 DB_DIR = "db"
 ACTORS_FILE = "actors.json"
+ACTORS_DB_FILE = "actors.db"
