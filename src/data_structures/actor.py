@@ -23,6 +23,12 @@ class Actor:
             "version": self.version
         }
 
+    def to_db_dict(self):
+        return {
+            "name": self.name,
+            "bacon_distance": self.bacon_distance
+        }
+
     @staticmethod
     def from_dict(name: str, data: dict) -> "Actor":
         actor = Actor(name=name, movies=data.get("movies", []))

@@ -4,13 +4,17 @@ from typing import Optional
 
 from fastapi import requests
 
-from src.actor_json_utils import write_actors_to_json, build_actor_objects
+from src.actor_json_utils import build_actor_objects
 from src.bfs_utils import compute_initial_bacon_distances
-from src.consts import ACTOR_CATEGORIES, REQUIRED_ACTORS, DATA_DIR, DB_DIR, ACTORS_FILE
+from src.consts import ACTOR_CATEGORIES, REQUIRED_ACTORS, DATA_DIR, DB_DIR, ACTORS_DB_FILE
+from src.data_accessors.db_writer import DBWriter
+from src.models.base import Base
+from src.models.db_engine import engine
 
 BASE_DIR = os.path.dirname(__file__)
 ABS_DATA_DIR = os.path.join(BASE_DIR, DATA_DIR)
 ABS_DB_DIR = os.path.join(BASE_DIR, DB_DIR)
+DB_PATH = os.path.join(ABS_DB_DIR, ACTORS_DB_FILE)
 
 
 def create_dir_if_not_exists(directory: str) -> None:
@@ -119,18 +123,13 @@ def build_actor_movie_map(principals_path: str,
     movie_titles = movie_id_to_title(movie_ids=all_movie_ids, titles_path=titles_path)
 
     return {
-        actors[actor_id]: [
-            movie_titles[movie_id] for movie_id in movie_ids if movie_id in movie_titles
-        ]
+        actors[actor_id]: list({movie_titles[movie_id] for movie_id in movie_ids if movie_id in movie_titles})
         for actor_id, movie_ids in actors_movies.items()
     }
 
 
 def create_db():
-    actors_path = os.path.join(ABS_DB_DIR, ACTORS_FILE)
-    if os.path.exists(actors_path):
-        print("actors.json already exists — skipping DB build")
-        return
+    boot_db()
 
     create_dir_if_not_exists(ABS_DATA_DIR)
     create_dir_if_not_exists(ABS_DB_DIR)
@@ -156,9 +155,18 @@ def create_db():
     actors_movies = build_actor_movie_map(principals_path=principals_path, titles_path=titles_path, actors=actors)
     actors = build_actor_objects(actors_movies)
     actors = compute_initial_bacon_distances(actors=actors)
-    write_actors_to_json(path=actors_path, actors=actors)
 
-    print("JSON written to actors.json")
+    db_writer = DBWriter()
+    db_writer.write_actors(actors)
+    db_writer.write_actor_movies(actors_movies)
+
+
+def boot_db():
+    if os.path.exists(DB_PATH):
+        os.remove(DB_PATH)
+        print("Removed existing SQLite DB")
+    Base.metadata.create_all(bind=engine)
+    print("Created SQLite tables")
 
 
 def main():

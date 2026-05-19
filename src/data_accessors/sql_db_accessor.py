@@ -1,4 +1,6 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from starlette import status
 
 from src.data_accessors.base_db_accessor import BaseDBAccessor
 from src.models.db_actor import DBActor
@@ -8,15 +10,18 @@ from src.models.db_engine import SessionLocal
 
 class SQLDBAccessor(BaseDBAccessor):
 
-    def get_bacon_distance(self, actor_name: str) -> int | None:
+    def get_bacon_distance(self, actor_name: str) -> str:
         session: Session = SessionLocal()
         try:
             actor = session.query(DBActor).filter(DBActor.name.ilike(actor_name)).first()
 
             if actor is None:
-                return None
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Actor '{actor_name}' does not exist in the database."
+                )  # todo this doesnt belong in here need to create actor not found exception
 
-            return actor.bacon_distance
+            return str(actor.bacon_distance)
 
         finally:
             session.close()

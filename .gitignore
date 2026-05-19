@@ -305,5 +305,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 # DB files
+db/*
 actors.json
+actors.db
 *.tsv.gz

@@ -1,10 +1,11 @@
 import json
 import os
-from http.client import HTTPException
 
+from fastapi import HTTPException
 from starlette import status
 
 from src.data_accessors.base_db_accessor import BaseDBAccessor
+from src.exceptions.actor_not_found_exception import ActorNotFoundException
 
 
 class JsonDBAccessor(BaseDBAccessor):
@@ -27,7 +28,4 @@ class JsonDBAccessor(BaseDBAccessor):
                 dist = info.get("bacon_distance", -1)
                 return "infinity" if dist == -1 else str(dist)
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Actor '{actor_name}' does not exist in the database."
-        )
+        raise ActorNotFoundException(actor_name=actor_name)
