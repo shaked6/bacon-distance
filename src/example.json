@@ -72,10 +72,7 @@
       "The 'Burbs",
       "That Thing You Do!"
     ],
-    "neighbors": [],
-    "bacon_distance": 1,
-    "bacon_parent": "Kevin Bacon",
-    "version": 1
+    "bacon_distance": 1
   },
   "Richard Burton": {
     "name": "Richard Burton",
@@ -138,10 +135,7 @@
       "Absolution",
       "The Sandpiper"
     ],
-    "neighbors": [],
-    "bacon_distance": 3,
-    "bacon_parent": "Stanley Tucci",
-    "version": 1
+    "bacon_distance": 3
   },
   "John Belushi": {
     "name": "John Belushi",
@@ -154,10 +148,7 @@
       "The Blues Brothers",
       "1941"
     ],
-    "neighbors": [],
-    "bacon_distance": 1,
-    "bacon_parent": "Kevin Bacon",
-    "version": 1
+    "bacon_distance": 1
   },
   "James Cagney": {
     "name": "James Cagney",
@@ -223,10 +214,7 @@
       "The Public Enemy",
       "Man of a Thousand Faces"
     ],
-    "neighbors": [],
-    "bacon_distance": 3,
-    "bacon_parent": "Stanley Tucci",
-    "version": 1
+    "bacon_distance": 3
   },
   "Ingrid Bergman": {
     "name": "Ingrid Bergman",
@@ -277,10 +265,7 @@
       "Adam Had Four Sons",
       "From the Mixed-Up Files of Mrs. Basil E. Frankweiler"
     ],
-    "neighbors": [],
-    "bacon_distance": 5,
-    "bacon_parent": "Humphrey Bogart",
-    "version": 1
+    "bacon_distance": 5
   },
   "Fred Astaire": {
     "name": "Fred Astaire",
@@ -325,10 +310,7 @@
       "Blue Skies",
       "Funny Face"
     ],
-    "neighbors": [],
-    "bacon_distance": -1,
-    "bacon_parent": null,
-    "version": 1
+    "bacon_distance": -1
   },
   "Ingmar Bergman": {
     "name": "Ingmar Bergman",
@@ -340,10 +322,7 @@
       "Liv Ullmann scener fra et liv",
       "Viaggio in Bergmania"
     ],
-    "neighbors": [],
-    "bacon_distance": -1,
-    "bacon_parent": null,
-    "version": 1
+    "bacon_distance": -1
   },
   "Lauren Bacall": {
     "name": "Lauren Bacall",
@@ -391,10 +370,7 @@
       "The Walker",
       "Dark Passage"
     ],
-    "neighbors": [],
-    "bacon_distance": 5,
-    "bacon_parent": "Humphrey Bogart",
-    "version": 1
+    "bacon_distance": 5
   },
   "Marlon Brando": {
     "name": "Marlon Brando",
@@ -439,10 +415,7 @@
       "The Fugitive Kind",
       "The Wild One"
     ],
-    "neighbors": [],
-    "bacon_distance": 4,
-    "bacon_parent": "Richard Burton",
-    "version": 1
+    "bacon_distance": 4
   },
   "John Travolta": {
     "name": "John Travolta",
@@ -516,10 +489,7 @@
       "Michael",
       "The Poison Rose"
     ],
-    "neighbors": [],
-    "bacon_distance": 6,
-    "bacon_parent": "Lauren Bacall",
-    "version": 1
+    "bacon_distance": 6
   },
   "Peter Dinklage": {
     "name": "Peter Dinklage",
@@ -578,10 +548,7 @@
       "I Care a Lot",
       "Pigeonholed"
     ],
-    "neighbors": [],
-    "bacon_distance": 4,
-    "bacon_parent": "James Cagney",
-    "version": 1
+    "bacon_distance": 4
   },
   "Stanley Tucci": {
     "name": "Stanley Tucci",
@@ -662,10 +629,7 @@
       "Conclave",
       "Burlesque"
     ],
-    "neighbors": [],
-    "bacon_distance": 2,
-    "bacon_parent": "Tom Hanks",
-    "version": 1
+    "bacon_distance": 2
   },
   "Humphrey Bogart": {
     "name": "Humphrey Bogart",
@@ -746,10 +710,7 @@
       "Invisible Stripes",
       "Dark Passage"
     ],
-    "neighbors": [],
-    "bacon_distance": 4,
-    "bacon_parent": "James Cagney",
-    "version": 1
+    "bacon_distance": 4
   },
   "Kevin Bacon": {
     "name": "Kevin Bacon",
@@ -816,10 +777,7 @@
       "Balto",
       "Black Mass"
     ],
-    "neighbors": [],
-    "bacon_distance": 0,
-    "bacon_parent": null,
-    "version": 1
+    "bacon_distance": 0
   },
   "Brigitte Bardot": {
     "name": "Brigitte Bardot",
@@ -860,9 +818,6 @@
       "The Novices",
       "Love Is My Profession"
     ],
-    "neighbors": [],
-    "bacon_distance": -1,
-    "bacon_parent": null,
-    "version": 1
+    "bacon_distance": -1
   }
 }
