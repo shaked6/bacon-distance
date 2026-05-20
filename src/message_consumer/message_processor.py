@@ -3,6 +3,7 @@ import json
 from src.bacon_distance_service import BaconDistanceService
 from src.data_accessors.base_db_accessor import BaseDBAccessor
 from src.data_accessors.db_writer import DBWriter
+from src.data_structures.actor import Actor
 
 
 class MessageProcessor:
@@ -65,8 +66,8 @@ class MessageProcessor:
         print(f"[worker] Received movie: {movie_name} with actors {actors}")
 
         for actor_name in actors:
-            self.db_writer.insert_actor_if_not_exists(actor_name)
-            self.db_writer.link_actor_to_movie(actor_name, movie_name)
+            self.db_writer.upsert_actor(Actor(actor_name))
+            self.db_writer.upsert_actor_movie(actor_name, movie_name)
 
         self.bacon_service.recompute()
 

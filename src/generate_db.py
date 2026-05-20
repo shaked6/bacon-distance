@@ -157,8 +157,8 @@ def create_db():
     actors = compute_bacon_distances(actors=actors)
 
     db_writer = DBWriter()
-    db_writer.write_actors(actors)
-    db_writer.write_actor_movies(actors_movies)
+    db_writer.bulk_upsert_actors(actors)
+    db_writer.bulk_upsert_actor_movies(actors_movies)
 
 
 def boot_db():
