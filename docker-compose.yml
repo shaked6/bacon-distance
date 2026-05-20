@@ -19,6 +19,9 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    depends_on:
+      db-builder:
+        condition: service_completed_successfully
     networks:
       - backend
 
@@ -28,6 +31,9 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    depends_on:
+      db-builder:
+        condition: service_completed_successfully
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -40,9 +46,12 @@ services:
       dockerfile: Dockerfile.message_consumer
     entrypoint: ["python", "-m", "src.message_consumer.run_message_processor"]
     container_name: message_consumer
+    depends_on:
+      db-builder:
+        condition: service_completed_successfully
     environment:
       RABBITMQ_HOST: rabbitmq
-      PYTHONUNBUFFERED: "1" # Forces instant log printing
+      PYTHONUNBUFFERED: "1"
     volumes:
       - actors_db:/app/src/db
     networks:
