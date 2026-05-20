@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import requests
 
 from src.actor_json_utils import build_actor_objects
-from src.bfs_utils import compute_initial_bacon_distances
+from src.bfs_utils import compute_bacon_distances
 from src.consts import ACTOR_CATEGORIES, REQUIRED_ACTORS, DATA_DIR, DB_DIR, ACTORS_DB_FILE
 from src.data_accessors.db_writer import DBWriter
 from src.models.base import Base
@@ -154,7 +154,7 @@ def create_db():
     ensure_required_actors(names_path, actors)
     actors_movies = build_actor_movie_map(principals_path=principals_path, titles_path=titles_path, actors=actors)
     actors = build_actor_objects(actors_movies)
-    actors = compute_initial_bacon_distances(actors=actors)
+    actors = compute_bacon_distances(actors=actors)
 
     db_writer = DBWriter()
     db_writer.write_actors(actors)

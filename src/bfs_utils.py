@@ -44,7 +44,7 @@ def bfs_from_bacon(adjacency: dict[str, set[str]]) -> tuple[dict[str, int], dict
     return distance, parent
 
 
-def compute_initial_bacon_distances(actors: dict[str, Actor]) -> dict[str, Actor]:
+def compute_bacon_distances(actors: dict[str, Actor]) -> dict[str, Actor]:
     adjacency = build_compact_adjacency(actors)
     distance, parent = bfs_from_bacon(adjacency)
 

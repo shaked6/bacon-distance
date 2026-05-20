@@ -7,19 +7,51 @@ services:
       - ./src/data:/app/src/data
       - actors_db:/app/src/db
     restart: "no"
+    networks:
+      - backend
 
   api:
     build:
       context: .
       dockerfile: Dockerfile.api
-    depends_on:
-      db-builder:
-        condition: service_completed_successfully
     volumes:
       - actors_db:/app/src/db
     ports:
       - "8080:8080"
     restart: unless-stopped
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - backend
+
+  message_consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile.message_consumer
+    entrypoint: ["python", "-m", "src.message_consumer.run_message_processor"]
+    container_name: message_consumer
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      PYTHONUNBUFFERED: "1" # Forces instant log printing
+    volumes:
+      - actors_db:/app/src/db
+    networks:
+      - backend
+    restart: always
+
+networks:
+  backend:
+    driver: bridge
 
 volumes:
   actors_db:

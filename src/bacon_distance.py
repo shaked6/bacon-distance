@@ -7,7 +7,7 @@ from src.exceptions.actor_not_found_exception import ActorNotFoundException
 
 def validate_actors_db_exists(db_path: str):
     if not os.path.exists(db_path):
-        print("Actors DB not found, init it first") # todo do this better
+        print("Actors DB not found, init it first")
         raise Exception("Actors DB not found, init it first")
     else:
         print("Actors DB found. Continuing...")

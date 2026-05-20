@@ -1,9 +1,6 @@
 import json
 import os
 
-from fastapi import HTTPException
-from starlette import status
-
 from src.data_accessors.base_db_accessor import BaseDBAccessor
 from src.exceptions.actor_not_found_exception import ActorNotFoundException
 
