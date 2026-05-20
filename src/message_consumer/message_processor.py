@@ -48,7 +48,6 @@ class MessageProcessor:
                 channel.start_consuming()
 
             except Exception as e:
-                # ANY error here means reconnect and continue forever
                 print(f"[worker] Fatal error in consumer loop: {e}. Restarting...")
                 continue
 

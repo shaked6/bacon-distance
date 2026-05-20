@@ -10,10 +10,15 @@ class BaconDistanceService:
         self.data_writer = data_writer
 
     def recompute(self):
-        actors = {}
-        for name in self.data_accessor.get_all_actor_names():
-            actors[name] = Actor(name=name, movies=self.data_accessor.get_movies_for_actor(name))
+        actors = {
+            name: Actor(name=name, movies=self.data_accessor.get_movies_for_actor(name))
+            for name in self.data_accessor.get_all_actor_names()
+        }
 
-        updated_actors = compute_bacon_distances(actors)
+        distances = compute_bacon_distances(actors)
 
-        self.data_writer.update_bacon_distances(updated_actors)
+        for name, actor in actors.items():
+            actor.bacon_distance = distances.get(name, -1)
+            actor.bump_version()
+
+        self.data_writer.update_bacon_distances(actors)

@@ -2,7 +2,7 @@ import gzip
 import os
 from typing import Optional
 
-from fastapi import requests
+import requests
 
 from src.actor_json_utils import build_actor_objects
 from src.bfs_utils import compute_bacon_distances
@@ -23,13 +23,8 @@ def create_dir_if_not_exists(directory: str) -> None:
         print(f"Created directory: {directory}")
 
 
-def build_path(directory: str, filename: str) -> str:
-    return os.path.join(directory, filename)
-
-
 def download_if_missing(url: str, directory: str, filename: str) -> str:
-    path = build_path(directory=directory, filename=filename)
-
+    path = os.path.join(directory, filename)
     if os.path.exists(path):
         print(f"Skipping download, exists: {path}")
         return path
@@ -75,10 +70,8 @@ def load_n_actors(names_path: str, num_of_actors: int) -> dict[str, str]:
         if is_actor(professions):
             actor_id = row["nconst"]
             actor_name = row["primaryName"]
-
             actors[actor_id] = actor_name
             count += 1
-
             if count >= num_of_actors:
                 break
 

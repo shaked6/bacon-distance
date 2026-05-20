@@ -1,5 +1,4 @@
 from collections import deque
-from typing import Optional
 
 from src.consts import KEVIN_BACON
 from src.data_structures.actor import Actor
@@ -25,12 +24,11 @@ def build_compact_adjacency(actors: dict[str, Actor]) -> dict[str, set[str]]:
     return adjacency
 
 
-def bfs_from_bacon(adjacency: dict[str, set[str]]) -> tuple[dict[str, int], dict[str, Optional[str]]]:
+def bfs_from_bacon(adjacency: dict[str, set[str]]) -> dict[str, int]:
     if KEVIN_BACON not in adjacency:
-        return {}, {}
+        return {}
 
     distance = {KEVIN_BACON: 0}
-    parent = {KEVIN_BACON: None}
     queue = deque([KEVIN_BACON])
 
     while queue:
@@ -38,20 +36,17 @@ def bfs_from_bacon(adjacency: dict[str, set[str]]) -> tuple[dict[str, int], dict
         for v in adjacency[u]:
             if v not in distance:
                 distance[v] = distance[u] + 1
-                parent[v] = u
                 queue.append(v)
 
-    return distance, parent
+    return distance
 
 
 def compute_bacon_distances(actors: dict[str, Actor]) -> dict[str, Actor]:
     adjacency = build_compact_adjacency(actors)
-    distance, parent = bfs_from_bacon(adjacency)
+    distance = bfs_from_bacon(adjacency)
 
     for name, actor in actors.items():
         actor.bacon_distance = distance.get(name, -1)
-        actor.bacon_parent = parent.get(name)
-        actor.bump_version()
 
     print("Computed Bacon distances")
     return actors
